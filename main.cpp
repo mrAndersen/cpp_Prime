@@ -10,9 +10,9 @@ struct ThreadBorders {
     int max = 0;
 };
 
-ThreadBorders getThreadBorders(int index) {
-    int min = index == 0 ? 0 : index * 100000;
-    int max = min + 100000;
+ThreadBorders getThreadBorders(int index, int threadRange = 100000) {
+    int min = index == 0 ? 0 : index * threadRange;
+    int max = min + threadRange;
 
     return {min, max};
 }
@@ -46,6 +46,7 @@ std::vector<int> lastPrimes;
 
 int main(int argc, char **argv) {
     int size = 2;
+    int range = 1000000;
 
     if (argc > 1) {
         size = atoi(argv[1]);
@@ -56,7 +57,7 @@ int main(int argc, char **argv) {
     lastPrimes.resize(size);
 
     for (int i = 0; i < size; ++i) {
-        auto borders = getThreadBorders(i);
+        auto borders = getThreadBorders(i, range);
 
         std::thread thread([borders, i]() {
             int primes = 0;
@@ -84,10 +85,10 @@ int main(int argc, char **argv) {
 
     while (true) {
         system("clear");
-        printf("%dms\n", count * 500);
+        printf("%d ms, range = %d\n", count * 500, range);
 
         for (int i = 0; i < size; ++i) {
-            auto borders = getThreadBorders(i);
+            auto borders = getThreadBorders(i, range);
             printf("Thread %d [%d - %d] -> %d (%d)\n", i, borders.min, borders.max, primeBuf[i], lastPrimes[i]);
         }
 
